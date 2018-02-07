@@ -14,7 +14,8 @@ namespace heatmap
 {
     public partial class Form1 : Form
     {
-        private Dictionary<string, string> beatmapinfo=new Dictionary<string, string>();
+        private Dictionary<string, string> beatmapinfo = new Dictionary<string, string>();
+        private List<HitObject> beatmap = new List<HitObject>();
         public Form1()
         {
             InitializeComponent();
@@ -22,7 +23,15 @@ namespace heatmap
 
         private void pictureBox2_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("bing!");
+            //MessageBox.Show("bing!");
+            int slidercount = 0, notecount = 0, spinnercount = 0;
+            foreach (HitObject obj in beatmap)
+            {
+                if (obj.type==0) { notecount++; }
+                else if (obj.type==1) { slidercount++; }
+                else if (obj.type==2) { spinnercount++; }
+            }
+            MessageBox.Show($"{notecount} Circles, {slidercount} Sliders, {spinnercount} Spinners");
         }
 
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
@@ -75,13 +84,13 @@ namespace heatmap
                 id = beatmapinfo["id"], setid = beatmapinfo["setid"], version = beatmapinfo["version"];
 
             int pixelcs = 0;
-            if (beatmapinfo["cs"] != "(unknown)") { pixelcs = (int)CStoOsuPixels(float.Parse(cs, CultureInfo.InvariantCulture)); }
+            if (beatmapinfo["cs"] != "(unknown)") { pixelcs = (int)OsuUtils.CStoOsuPixels(float.Parse(cs, CultureInfo.InvariantCulture)); }
 
             float[] msvalues = { 0, 0, 0 };
-            if (beatmapinfo["od"]!="(unknown)") { msvalues = ODtoMilliseconds(float.Parse(od, CultureInfo.InvariantCulture)); }
+            if (beatmapinfo["od"] != "(unknown)") { msvalues = OsuUtils.ODtoMilliseconds(float.Parse(od, CultureInfo.InvariantCulture)); }
 
             int arms = 0;
-            if (beatmapinfo["ar"] != "(unknown)") { arms = ARtoMilliseconds(float.Parse(ar, CultureInfo.InvariantCulture)); }
+            if (beatmapinfo["ar"] != "(unknown)") { arms = OsuUtils.ARtoMilliseconds(float.Parse(ar, CultureInfo.InvariantCulture)); }
 
             string updatedinfo = $"Title: {title}\nArtist: {artist}\nDifficulty: {diffname}\nMapset by: {mapper}\n" +
                 $"Source: {source}\nApproach Rate: {ar} ({arms}ms)\nCircle Size: {cs} ({pixelcs} osu!pixels)\nHP Drain: {hp}\n" +
@@ -99,39 +108,25 @@ namespace heatmap
 
             labelBeatmapSetID.Text = "Mapset ID: " + setid;
             labelBeatmapSetID.LinkArea = new LinkArea(11, setid.Length);
+
+            labelHitobjectCount.Text = $"{beatmap.Count}x HitObjects";
         }
 
         //updates the map info with a new dictionary
         private void UpdateMapInfo(Dictionary<string, string> data) { beatmapinfo = data; }
 
-        // utilities - functions I can use for various things - probably gonna move them to a class later on
-
-        // CS to osu!pixels - osu!pixels are what the diameter of the circles would be in a 512x384 resolution.
-        // formula is rough but it does its job. originally found here: https://osu.ppy.sh/forum/p/4282387 (thx Cl8n!)
-        private float CStoOsuPixels(float cs) { return (int)(109 - 9 * cs); }
-
-        // OD to milliseconds - returns an array where the 0th item is for 300s, the 1st is for 100s and the third is for 50s.
-        // formula might not be correct, idk where this guy got it: https://www.reddit.com/r/osugame/comments/781ot4/od_in_milliseconds/doqngos (thx anyway /u/Fukiyel!)
-        private float[] ODtoMilliseconds(float od) { return new float[]{ -(6f * (od - 13.25f)), -(8f * (od - 17.4375f)), -(10f * (od - 19.95f))}; }
-
-        // AR to milliseconds - returns the milliseconds the circle will stay on screen for with any given AR.
-        // the formula should be the correct one. sauce has been long lost in my search history from years ago.
-        private int ARtoMilliseconds(float ar) { return (int)(ar < 5 ? (1800 - (ar * 120)) : (1200 - ((ar - 5) * 150))); }
-
-        // returns the distance between 2 points - in float because fite me - also backup float-array one cause vectors
-        private float PointDistance(float x1, float y1, float x2, float y2) { return (float)Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2)); }
-        private float PointDistance(float[] p1, float[] p2) { return PointDistance(p1[0], p1[1], p2[0], p2[1]); }
-
-        // end of the utility functions
-
-        private void LoadBeatmap(string path)
+        //attempts to load a beatmap from a file path.
+        //returns whether it succeeded or not - while this is not used yet, it can be useful so I'm doing it before I forget.
+        private bool LoadBeatmap(string path)
         {
             //MessageBox.Show(path);
             string[] filelines;
             Dictionary<string, string> newinfo = new Dictionary<string, string>();
+            List<HitObject> newmap = new List<HitObject>();
             bool[] changed = { false, false, false, false, false, false, false, false, false, false, false, false };
             string[] changes = {"Title", "Artist", "Mapper", "Difficulty Name", "Source", "Difficulty ID", "Mapset ID",
                 "HP", "CS", "OD", "AR", "File Version" };
+            bool parsehitobjects = false;
 
             SetDefaultMapInfo(newinfo);
 
@@ -139,21 +134,19 @@ namespace heatmap
             catch (Exception ex)
             {
                 MessageBox.Show($"Trying to load the file raised an exception:\n{ex.Message}", "Couldn't load file!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                return false;
             }
 
             if (!filelines[0].StartsWith("osu file format")) //check out the file format - if there is one, that is
             {
                 MessageBox.Show("This doesn't look like an osu! beatmap file.", "Invalid file!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                return false;
             }
             else //if it does have a file format, set its value
             {
                 newinfo["version"] = filelines[0].Replace("osu file format v", "").Trim();
                 changed[11] = true;
             }
-
-            
 
             foreach (string line in filelines) //parse all lines
             {
@@ -163,9 +156,26 @@ namespace heatmap
                     if (mode!=0)
                     {
                         MessageBox.Show($"[{mode}] is not a valid gamemode!", "Invalid gamemode!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
+                        return false;
                     }
                 }
+
+                //parse hitobjects
+                if (parsehitobjects)
+                {
+                    try
+                    {
+                        HitObject hitobj = new HitObject(line);
+                        newmap.Add(hitobj);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error parsing hitobject: "+ex.Message, "Invalid HitObject!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return false;
+                    }
+                }
+
+                if (line.StartsWith("[HitObjects]")) { parsehitobjects = true; } //after the parrsing code so it starts parsing from *the next line*.
 
                 //update beatmap info
                 if (line.StartsWith("Title:")) { newinfo["title"] = line.Replace("Title:", "").Trim(); changed[0] = true; }
@@ -190,8 +200,21 @@ namespace heatmap
                 }
             }
 
+            if (!parsehitobjects)
+            {
+                MessageBox.Show("Looks like this beatmap has no HitObjects. The map will not be loaded.", "No HitObjects!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            else
+            {
+                MessageBox.Show($"Succesfully parsed {newmap.Count} HitObjects.", "HitObjects parsed!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
             UpdateMapInfo(newinfo);
+            beatmap = newmap;
             UpdateMapData();
+
+            return true;
         }
 
         private void button2_Click(object sender, EventArgs e)

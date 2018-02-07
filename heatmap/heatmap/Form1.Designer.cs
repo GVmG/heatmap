@@ -43,10 +43,11 @@
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxRenderType = new System.Windows.Forms.ComboBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.labelBeatmapInfo = new System.Windows.Forms.LinkLabel();
+            this.labelBeatmapSetID = new System.Windows.Forms.LinkLabel();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.button2 = new System.Windows.Forms.Button();
-            this.labelBeatmapSetID = new System.Windows.Forms.LinkLabel();
-            this.labelBeatmapInfo = new System.Windows.Forms.LinkLabel();
+            this.labelHitobjectCount = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -93,7 +94,8 @@
             // 
             this.labelBeatmapID.AutoSize = true;
             this.labelBeatmapID.LinkArea = new System.Windows.Forms.LinkArea(15, 6);
-            this.labelBeatmapID.Location = new System.Drawing.Point(6, 187);
+            this.labelBeatmapID.Location = new System.Drawing.Point(6, 210);
+            this.labelBeatmapID.MaximumSize = new System.Drawing.Size(213, 0);
             this.labelBeatmapID.Name = "labelBeatmapID";
             this.labelBeatmapID.Size = new System.Drawing.Size(90, 17);
             this.labelBeatmapID.TabIndex = 5;
@@ -109,7 +111,7 @@
             this.pictureBox2.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox2.InitialImage")));
             this.pictureBox2.Location = new System.Drawing.Point(658, 7);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(216, 175);
+            this.pictureBox2.Size = new System.Drawing.Size(227, 175);
             this.pictureBox2.TabIndex = 9;
             this.pictureBox2.TabStop = false;
             this.pictureBox2.Click += new System.EventHandler(this.pictureBox2_Click);
@@ -168,7 +170,7 @@
             this.groupBox1.Controls.Add(this.checkBoxShowSpinners);
             this.groupBox1.Location = new System.Drawing.Point(658, 188);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(214, 119);
+            this.groupBox1.Size = new System.Drawing.Size(227, 92);
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Settings";
@@ -176,7 +178,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 81);
+            this.label2.Location = new System.Drawing.Point(6, 65);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(84, 13);
             this.label2.TabIndex = 12;
@@ -189,23 +191,51 @@
             "Soft",
             "Circles",
             "Points"});
-            this.comboBoxRenderType.Location = new System.Drawing.Point(96, 78);
+            this.comboBoxRenderType.Location = new System.Drawing.Point(96, 62);
             this.comboBoxRenderType.Name = "comboBoxRenderType";
-            this.comboBoxRenderType.Size = new System.Drawing.Size(112, 21);
+            this.comboBoxRenderType.Size = new System.Drawing.Size(125, 21);
             this.comboBoxRenderType.TabIndex = 4;
             this.comboBoxRenderType.Text = "Soft";
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.labelHitobjectCount);
             this.groupBox2.Controls.Add(this.labelBeatmapInfo);
             this.groupBox2.Controls.Add(this.labelBeatmapSetID);
             this.groupBox2.Controls.Add(this.labelBeatmapID);
-            this.groupBox2.Location = new System.Drawing.Point(658, 313);
+            this.groupBox2.Location = new System.Drawing.Point(658, 286);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(214, 203);
+            this.groupBox2.Size = new System.Drawing.Size(227, 230);
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Beatmap Info";
+            // 
+            // labelBeatmapInfo
+            // 
+            this.labelBeatmapInfo.AutoSize = true;
+            this.labelBeatmapInfo.LinkArea = new System.Windows.Forms.LinkArea(0, 14);
+            this.labelBeatmapInfo.Location = new System.Drawing.Point(6, 16);
+            this.labelBeatmapInfo.MaximumSize = new System.Drawing.Size(213, 0);
+            this.labelBeatmapInfo.Name = "labelBeatmapInfo";
+            this.labelBeatmapInfo.Size = new System.Drawing.Size(74, 13);
+            this.labelBeatmapInfo.TabIndex = 14;
+            this.labelBeatmapInfo.TabStop = true;
+            this.labelBeatmapInfo.Text = "(beatmap info)";
+            this.labelBeatmapInfo.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.labelBeatmapInfo_LinkClicked);
+            // 
+            // labelBeatmapSetID
+            // 
+            this.labelBeatmapSetID.AutoSize = true;
+            this.labelBeatmapSetID.LinkArea = new System.Windows.Forms.LinkArea(11, 6);
+            this.labelBeatmapSetID.Location = new System.Drawing.Point(6, 193);
+            this.labelBeatmapSetID.MaximumSize = new System.Drawing.Size(213, 0);
+            this.labelBeatmapSetID.Name = "labelBeatmapSetID";
+            this.labelBeatmapSetID.Size = new System.Drawing.Size(84, 17);
+            this.labelBeatmapSetID.TabIndex = 13;
+            this.labelBeatmapSetID.TabStop = true;
+            this.labelBeatmapSetID.Text = "Mapset ID: ------";
+            this.labelBeatmapSetID.UseCompatibleTextRendering = true;
+            this.labelBeatmapSetID.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.labelBeatmapSetID_LinkClicked);
             // 
             // openFileDialog1
             // 
@@ -222,37 +252,20 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // labelBeatmapSetID
+            // labelHitobjectCount
             // 
-            this.labelBeatmapSetID.AutoSize = true;
-            this.labelBeatmapSetID.LinkArea = new System.Windows.Forms.LinkArea(11, 6);
-            this.labelBeatmapSetID.Location = new System.Drawing.Point(6, 170);
-            this.labelBeatmapSetID.Name = "labelBeatmapSetID";
-            this.labelBeatmapSetID.Size = new System.Drawing.Size(84, 17);
-            this.labelBeatmapSetID.TabIndex = 13;
-            this.labelBeatmapSetID.TabStop = true;
-            this.labelBeatmapSetID.Text = "Mapset ID: ------";
-            this.labelBeatmapSetID.UseCompatibleTextRendering = true;
-            this.labelBeatmapSetID.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.labelBeatmapSetID_LinkClicked);
-            // 
-            // labelBeatmapInfo
-            // 
-            this.labelBeatmapInfo.AutoSize = true;
-            this.labelBeatmapInfo.LinkArea = new System.Windows.Forms.LinkArea(11, 6);
-            this.labelBeatmapInfo.Location = new System.Drawing.Point(6, 16);
-            this.labelBeatmapInfo.Name = "labelBeatmapInfo";
-            this.labelBeatmapInfo.Size = new System.Drawing.Size(77, 17);
-            this.labelBeatmapInfo.TabIndex = 14;
-            this.labelBeatmapInfo.TabStop = true;
-            this.labelBeatmapInfo.Text = "(beatmap info)";
-            this.labelBeatmapInfo.UseCompatibleTextRendering = true;
-            this.labelBeatmapInfo.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.labelBeatmapInfo_LinkClicked);
+            this.labelHitobjectCount.AutoSize = true;
+            this.labelHitobjectCount.Location = new System.Drawing.Point(6, 177);
+            this.labelHitobjectCount.Name = "labelHitobjectCount";
+            this.labelHitobjectCount.Size = new System.Drawing.Size(68, 13);
+            this.labelHitobjectCount.TabIndex = 15;
+            this.labelHitobjectCount.Text = "--- HitObjects";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(884, 528);
+            this.ClientSize = new System.Drawing.Size(897, 528);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -299,6 +312,7 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.LinkLabel labelBeatmapInfo;
         private System.Windows.Forms.LinkLabel labelBeatmapSetID;
+        private System.Windows.Forms.Label labelHitobjectCount;
     }
 }
 
