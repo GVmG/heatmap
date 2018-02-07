@@ -8,17 +8,16 @@ You can pick from different settings on the right, like how the program will ren
 
 
 # Basic Features
-(that I still didn't add - but am working hard on implementing, like right now)
-- make everything actually work (as of now it's just a pretty form)
-- soft, circle, point heatmapping
 - loading map info
+Upcoming features:
+- soft, circle, point heatmapping
 - ability to ignore certain hitobject types (so maybe you could only watch sliders, or just notes, or... just spinners, I guess)
 
 
-# Features to Come
+# Features to Come (eventually)
 - color heatmapping
 - actually account for sliderbodies
-- ability to only lok at the heatmap in a part of the map (as opposed to just the whole map)
+- ability to only look at the heatmap in a part of the map (as opposed to just the whole map)
 - anything useful really (hmu on Discord @GV#5559 if you have a request!)
 
 # A tad bit of Credits
