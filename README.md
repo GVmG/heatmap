@@ -27,5 +27,6 @@ This program was made by [Rainfall](https://osu.ppy.sh/u/6995159).
 Special Thanks:
 - the Mapping Mentorship people for the idea, and for some feature requests. Also for being the great people they are.
 - peppy for making such a great game.
+- Cl8n for [the CS-to-osu!pixels formula](https://osu.ppy.sh/forum/p/4282387) and /u/Fukiyel for [the OD-to-Milliseconds formula](https://www.reddit.com/r/osugame/comments/781ot4/od_in_milliseconds/doqngos)
 - Borengar for constanty using JavaScript so that my poorly performing code has something to be faster than.
 - thank mr monstrata 4 da pp
