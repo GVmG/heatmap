@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.label1 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
@@ -47,7 +48,7 @@
             this.labelBeatmapSetID = new System.Windows.Forms.LinkLabel();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.button2 = new System.Windows.Forms.Button();
-            this.labelHitobjectCount = new System.Windows.Forms.Label();
+            this.toolTipInfo = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -199,7 +200,6 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.labelHitobjectCount);
             this.groupBox2.Controls.Add(this.labelBeatmapInfo);
             this.groupBox2.Controls.Add(this.labelBeatmapSetID);
             this.groupBox2.Controls.Add(this.labelBeatmapID);
@@ -252,15 +252,6 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // labelHitobjectCount
-            // 
-            this.labelHitobjectCount.AutoSize = true;
-            this.labelHitobjectCount.Location = new System.Drawing.Point(6, 177);
-            this.labelHitobjectCount.Name = "labelHitobjectCount";
-            this.labelHitobjectCount.Size = new System.Drawing.Size(68, 13);
-            this.labelHitobjectCount.TabIndex = 15;
-            this.labelHitobjectCount.Text = "--- HitObjects";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -312,7 +303,7 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.LinkLabel labelBeatmapInfo;
         private System.Windows.Forms.LinkLabel labelBeatmapSetID;
-        private System.Windows.Forms.Label labelHitobjectCount;
+        private System.Windows.Forms.ToolTip toolTipInfo;
     }
 }
 

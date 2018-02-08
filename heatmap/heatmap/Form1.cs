@@ -23,15 +23,7 @@ namespace heatmap
 
         private void pictureBox2_Click(object sender, EventArgs e)
         {
-            //MessageBox.Show("bing!");
-            int slidercount = 0, notecount = 0, spinnercount = 0;
-            foreach (HitObject obj in beatmap)
-            {
-                if (obj.type==0) { notecount++; }
-                else if (obj.type==1) { slidercount++; }
-                else if (obj.type==2) { spinnercount++; }
-            }
-            MessageBox.Show($"{notecount} Circles, {slidercount} Sliders, {spinnercount} Spinners");
+            MessageBox.Show("bing!");
         }
 
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
@@ -56,7 +48,7 @@ namespace heatmap
         {
             SetDefaultMapInfo(beatmapinfo);
 
-            UpdateMapData();
+            UpdateMapData(beatmapinfo, new int[] { 0, 0, 0 });
         }
 
         private void SetDefaultMapInfo(Dictionary<string, string> infodic)
@@ -76,26 +68,30 @@ namespace heatmap
         }
 
         //updates the data shown in the form
-        private void UpdateMapData()
+        private void UpdateMapData(Dictionary<string, string> newinfo, int[] counts)
         {
-            string artist = beatmapinfo["artist"], title = beatmapinfo["title"], mapper = beatmapinfo["mapper"],
-                diffname = beatmapinfo["diffname"], source = beatmapinfo["source"],
-                cs = beatmapinfo["cs"], od = beatmapinfo["od"], hp = beatmapinfo["hp"], ar = beatmapinfo["ar"],
-                id = beatmapinfo["id"], setid = beatmapinfo["setid"], version = beatmapinfo["version"];
+            string artist = newinfo["artist"], title = newinfo["title"], mapper = newinfo["mapper"],
+                diffname = newinfo["diffname"], source = newinfo["source"],
+                cs = newinfo["cs"], od = newinfo["od"], hp = newinfo["hp"], ar = newinfo["ar"],
+                id = newinfo["id"], setid = newinfo["setid"], version = newinfo["version"];
 
             int pixelcs = 0;
-            if (beatmapinfo["cs"] != "(unknown)") { pixelcs = (int)OsuUtils.CStoOsuPixels(float.Parse(cs, CultureInfo.InvariantCulture)); }
+            if (newinfo["cs"] != "(unknown)") { pixelcs = (int)OsuUtils.CStoOsuPixels(float.Parse(cs, CultureInfo.InvariantCulture)); }
 
             float[] msvalues = { 0, 0, 0 };
-            if (beatmapinfo["od"] != "(unknown)") { msvalues = OsuUtils.ODtoMilliseconds(float.Parse(od, CultureInfo.InvariantCulture)); }
+            if (newinfo["od"] != "(unknown)") { msvalues = OsuUtils.ODtoMilliseconds(float.Parse(od, CultureInfo.InvariantCulture)); }
 
             int arms = 0;
-            if (beatmapinfo["ar"] != "(unknown)") { arms = OsuUtils.ARtoMilliseconds(float.Parse(ar, CultureInfo.InvariantCulture)); }
+            if (newinfo["ar"] != "(unknown)") { arms = OsuUtils.ARtoMilliseconds(float.Parse(ar, CultureInfo.InvariantCulture)); }
 
             string updatedinfo = $"Title: {title}\nArtist: {artist}\nDifficulty: {diffname}\nMapset by: {mapper}\n" +
-                $"Source: {source}\nApproach Rate: {ar} ({arms}ms)\nCircle Size: {cs} ({pixelcs} osu!pixels)\nHP Drain: {hp}\n" +
-                $"Overall Difficulty: {od}\n(300: ±{(int)msvalues[0]}ms, 100: ±{(int)msvalues[1]}ms, 50: ±{(int)msvalues[2]}ms)" +
-                $"\nBeatmap Version: v{version}";
+                $"Source: {source}\nApproach Rate: {ar} ({arms}ms)\nCircle Size: {cs}\nHP Drain: {hp}\n" +
+                $"Overall Difficulty: {od}\n\n(hover for more info!)";
+            
+            toolTipInfo.SetToolTip(labelBeatmapInfo, $"Beatmap Format: {version}\n\n" +
+                $"300: ±{(int)msvalues[0]}ms - 100: ±{(int)msvalues[1]}ms - 50: ±{(int)msvalues[2]}ms\n" +
+                $"{counts[0]}x Circles, {counts[1]}x Sliders, {counts[2]}x Spinners\n" +
+                $"Circle Size is {pixelcs} osu!pixels.");
 
             //update the links
             //note that the hardcoded values are the length of the strings before where the url should start because
@@ -108,8 +104,6 @@ namespace heatmap
 
             labelBeatmapSetID.Text = "Mapset ID: " + setid;
             labelBeatmapSetID.LinkArea = new LinkArea(11, setid.Length);
-
-            labelHitobjectCount.Text = $"{beatmap.Count}x HitObjects";
         }
 
         //updates the map info with a new dictionary
@@ -119,7 +113,7 @@ namespace heatmap
         //returns whether it succeeded or not - while this is not used yet, it can be useful so I'm doing it before I forget.
         private bool LoadBeatmap(string path)
         {
-            //MessageBox.Show(path);
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             string[] filelines;
             Dictionary<string, string> newinfo = new Dictionary<string, string>();
             List<HitObject> newmap = new List<HitObject>();
@@ -127,6 +121,7 @@ namespace heatmap
             string[] changes = {"Title", "Artist", "Mapper", "Difficulty Name", "Source", "Difficulty ID", "Mapset ID",
                 "HP", "CS", "OD", "AR", "File Version" };
             bool parsehitobjects = false;
+            int[] counts = new int[] { 0, 0, 0 };
 
             SetDefaultMapInfo(newinfo);
 
@@ -167,6 +162,7 @@ namespace heatmap
                     {
                         HitObject hitobj = new HitObject(line);
                         newmap.Add(hitobj);
+                        counts[hitobj.type]++;
                     }
                     catch (Exception ex)
                     {
@@ -175,7 +171,7 @@ namespace heatmap
                     }
                 }
 
-                if (line.StartsWith("[HitObjects]")) { parsehitobjects = true; } //after the parrsing code so it starts parsing from *the next line*.
+                if (line.StartsWith("[HitObjects]")) { parsehitobjects = true; } //after the parsing code so it starts parsing from *the next line*.
 
                 //update beatmap info
                 if (line.StartsWith("Title:")) { newinfo["title"] = line.Replace("Title:", "").Trim(); changed[0] = true; }
@@ -200,6 +196,7 @@ namespace heatmap
                 }
             }
 
+            watch.Stop();
             if (!parsehitobjects)
             {
                 MessageBox.Show("Looks like this beatmap has no HitObjects. The map will not be loaded.", "No HitObjects!", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -207,12 +204,13 @@ namespace heatmap
             }
             else
             {
-                MessageBox.Show($"Succesfully parsed {newmap.Count} HitObjects.", "HitObjects parsed!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show($"Succesfully parsed {newmap.Count} HitObjects in {watch.ElapsedMilliseconds}ms.", "HitObjects parsed!", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
             UpdateMapInfo(newinfo);
             beatmap = newmap;
-            UpdateMapData();
+            UpdateMapData(beatmapinfo, counts);
+            //toolTipInfo.SetToolTip(labelBeatmapInfo, $"{counts[0]}x Circles, {counts[1]}x Sliders, {counts[2]}x Spinners");
 
             return true;
         }
