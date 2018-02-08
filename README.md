@@ -16,7 +16,8 @@ Upcoming Features:
 - like, the actual heatmapping lol
 
 
-# Planned Features (*might* be added to the program *eventually*, after the Upcoming Features)
+# Planned Features
+(*might* be added to the program *eventually*, after the Upcoming Features)
 - color heatmapping
 - actually account for sliderbodies
 - ability to only look at the heatmap in a part of the map (as opposed to just the whole map)
