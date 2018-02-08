@@ -31,5 +31,11 @@ namespace heatmap
         // returns the distance between 2 points - in float because fite me - also backup float-array one cause vectors
         public static float PointDistance(float x1, float y1, float x2, float y2) { return (float)Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2)); }
         public static float PointDistance(float[] p1, float[] p2) { return PointDistance(p1[0], p1[1], p2[0], p2[1]); }
+
+        // returns a value or its min or max - just ints cause yes
+        public static int Clamp(int value, int min, int max)
+        {
+            return (value < min ? min : (value > max ? max : value));
+        }
     }
 }

@@ -49,6 +49,8 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.button2 = new System.Windows.Forms.Button();
             this.toolTipInfo = new System.Windows.Forms.ToolTip(this.components);
+            this.rangeBar1 = new heatmap.RangeBar();
+            this.labelTimeline = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -252,11 +254,30 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
+            // rangeBar1
+            // 
+            this.rangeBar1.Location = new System.Drawing.Point(12, 522);
+            this.rangeBar1.Name = "rangeBar1";
+            this.rangeBar1.Size = new System.Drawing.Size(640, 40);
+            this.rangeBar1.TabIndex = 13;
+            this.rangeBar1.RangeChanged+=this.rangeBar1_RangeChanged;
+            // 
+            // labelTimeline
+            // 
+            this.labelTimeline.AutoSize = true;
+            this.labelTimeline.Location = new System.Drawing.Point(661, 536);
+            this.labelTimeline.Name = "labelTimeline";
+            this.labelTimeline.Size = new System.Drawing.Size(114, 13);
+            this.labelTimeline.TabIndex = 14;
+            this.labelTimeline.Text = "Range: 00:00 -> 03:32";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(897, 528);
+            this.ClientSize = new System.Drawing.Size(897, 600);
+            this.Controls.Add(this.labelTimeline);
+            this.Controls.Add(this.rangeBar1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -304,6 +325,8 @@
         private System.Windows.Forms.LinkLabel labelBeatmapInfo;
         private System.Windows.Forms.LinkLabel labelBeatmapSetID;
         private System.Windows.Forms.ToolTip toolTipInfo;
+        private RangeBar rangeBar1;
+        private System.Windows.Forms.Label labelTimeline;
     }
 }
 

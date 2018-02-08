@@ -210,7 +210,6 @@ namespace heatmap
             UpdateMapInfo(newinfo);
             beatmap = newmap;
             UpdateMapData(beatmapinfo, counts);
-            //toolTipInfo.SetToolTip(labelBeatmapInfo, $"{counts[0]}x Circles, {counts[1]}x Sliders, {counts[2]}x Spinners");
 
             return true;
         }
@@ -254,6 +253,11 @@ namespace heatmap
             {
                 System.Diagnostics.Process.Start($"http://osu.ppy.sh/u/{beatmapinfo["mapper"]}");
             }
+        }
+
+        private void rangeBar1_RangeChanged(object sender, EventArgs e)
+        {
+            labelTimeline.Text = $"Range: {(int)(rangeBar1.GetMin() * 100)} / {(int)(rangeBar1.GetMax() * 100)}";
         }
     }
 }
