@@ -51,6 +51,7 @@
             this.toolTipInfo = new System.Windows.Forms.ToolTip(this.components);
             this.rangeBar1 = new heatmap.RangeBar();
             this.labelTimeline = new System.Windows.Forms.Label();
+            this.checkBoxRenderColoured = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -97,7 +98,7 @@
             // 
             this.labelBeatmapID.AutoSize = true;
             this.labelBeatmapID.LinkArea = new System.Windows.Forms.LinkArea(15, 6);
-            this.labelBeatmapID.Location = new System.Drawing.Point(6, 210);
+            this.labelBeatmapID.Location = new System.Drawing.Point(6, 188);
             this.labelBeatmapID.MaximumSize = new System.Drawing.Size(213, 0);
             this.labelBeatmapID.Name = "labelBeatmapID";
             this.labelBeatmapID.Size = new System.Drawing.Size(90, 17);
@@ -165,6 +166,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.checkBoxRenderColoured);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.comboBoxRenderType);
             this.groupBox1.Controls.Add(this.checkBoxShowSliders);
@@ -173,7 +175,7 @@
             this.groupBox1.Controls.Add(this.checkBoxShowSpinners);
             this.groupBox1.Location = new System.Drawing.Point(658, 188);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(227, 92);
+            this.groupBox1.Size = new System.Drawing.Size(227, 114);
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Settings";
@@ -205,9 +207,9 @@
             this.groupBox2.Controls.Add(this.labelBeatmapInfo);
             this.groupBox2.Controls.Add(this.labelBeatmapSetID);
             this.groupBox2.Controls.Add(this.labelBeatmapID);
-            this.groupBox2.Location = new System.Drawing.Point(658, 286);
+            this.groupBox2.Location = new System.Drawing.Point(658, 308);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(227, 230);
+            this.groupBox2.Size = new System.Drawing.Size(227, 208);
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Beatmap Info";
@@ -229,7 +231,7 @@
             // 
             this.labelBeatmapSetID.AutoSize = true;
             this.labelBeatmapSetID.LinkArea = new System.Windows.Forms.LinkArea(11, 6);
-            this.labelBeatmapSetID.Location = new System.Drawing.Point(6, 193);
+            this.labelBeatmapSetID.Location = new System.Drawing.Point(6, 171);
             this.labelBeatmapSetID.MaximumSize = new System.Drawing.Size(213, 0);
             this.labelBeatmapSetID.Name = "labelBeatmapSetID";
             this.labelBeatmapSetID.Size = new System.Drawing.Size(84, 17);
@@ -270,11 +272,21 @@
             this.labelTimeline.TabIndex = 14;
             this.labelTimeline.Text = "Range: 00:00 -> 03:32";
             // 
+            // checkBoxRenderColoured
+            // 
+            this.checkBoxRenderColoured.AutoSize = true;
+            this.checkBoxRenderColoured.Location = new System.Drawing.Point(6, 89);
+            this.checkBoxRenderColoured.Name = "checkBoxRenderColoured";
+            this.checkBoxRenderColoured.Size = new System.Drawing.Size(120, 17);
+            this.checkBoxRenderColoured.TabIndex = 13;
+            this.checkBoxRenderColoured.Text = "Coloured Rendering";
+            this.checkBoxRenderColoured.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(897, 600);
+            this.ClientSize = new System.Drawing.Size(897, 567);
             this.Controls.Add(this.labelTimeline);
             this.Controls.Add(this.rangeBar1);
             this.Controls.Add(this.button2);
@@ -326,6 +338,7 @@
         private System.Windows.Forms.ToolTip toolTipInfo;
         private RangeBar rangeBar1;
         private System.Windows.Forms.Label labelTimeline;
+        private System.Windows.Forms.CheckBox checkBoxRenderColoured;
     }
 }
 

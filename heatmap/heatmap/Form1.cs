@@ -17,6 +17,7 @@ namespace heatmap
     {
         private Dictionary<string, string> beatmapinfo = new Dictionary<string, string>();
         private List<HitObject> beatmap = new List<HitObject>();
+        private static Color[] colorarray = new Color[] { Color.Black, Color.Blue, Color.Green, Color.Yellow, Color.Red}; //used in color function for heatmap.
 
         public Form1()
         {
@@ -142,6 +143,7 @@ namespace heatmap
             List<Pen> penlist=new List<Pen>(); //for later memory cleaning.
 
             g.Clear(Color.Black);
+            g.CompositingMode = CompositingMode.SourceOver;
 
             int cs = (int)OsuUtils.CStoOsuPixels(float.Parse(beatmapinfo["cs"], CultureInfo.InvariantCulture));
 
@@ -262,25 +264,51 @@ namespace heatmap
 
                 if (rendertype == 0) //point rendering
                 {
-                    for (int i = spinnercount; i > 0; i++) //reverse for loop cause SPEEEEEEEED
+                    for (int i = spinnercount; i > 0; i--) //reverse for loop cause SPEEEEEEEED
                     {
-                        g.DrawEllipse(pen, 320 + offx, 240 + offy, 1, 1);
+                        g.DrawEllipse(pen, 320, 240, 1, 1);
                     }
                 }
                 else // if rendering by soft *or* hard circle, always render spinners as a circumference (not a filled circle) of half the cs
                 {
-                    for (int i = spinnercount; i > 0; i++) 
+                    for (int i = spinnercount; i > 0; i--) 
                     {
-                        g.DrawEllipse(pen, 320 + offx - (int)(cs * 0.25), 240 + offy - (int)(cs * 0.25), (int)(cs * 0.5), (int)(cs * 0.5));
+                        g.DrawEllipse(pen, 320 - (int)(cs * 0.25), 240 - (int)(cs * 0.25), (int)(cs * 0.5), (int)(cs * 0.5));
                     }
                 }
             }
 
             foreach (Pen pen in penlist) { pen.Dispose(); } //clean dat memory boiiii (this actually doesn't clean much but it's better to have it)
-            
+
+            //Console.WriteLine(surface.GetPixel(0, 0));
+            if (checkBoxRenderColoured.Checked)
+            {
+                for (int ix = surface.Width - 1; ix>=0 ; ix--)
+                {
+                    for (int iy = surface.Height - 1; iy >= 0; iy--)
+                    {
+                        float curvalue = surface.GetPixel(ix, iy).R / 256f;
+                        surface.SetPixel(ix, iy, GetColorFromHMValue(curvalue));
+                    }
+                }
+            }
+
             return surface;
         }
         
+        // returns a color based on the input, for the colored heatmap rendering (range 0-1)
+        public static Color GetColorFromHMValue(float value)
+        {
+            int r, g, b;
+            int index = (int)(value * (colorarray.Count() - 1));
+            float diff = ((value * (colorarray.Count() - 1))) - (float)index;
+
+            r = (int)(colorarray[index].R + ((colorarray[index + 1].R - colorarray[index].R) * diff));
+            g = (int)(colorarray[index].G + ((colorarray[index + 1].G - colorarray[index].G) * diff));
+            b = (int)(colorarray[index].B + ((colorarray[index + 1].B - colorarray[index].B) * diff));
+            return Color.FromArgb(255, r, g, b);
+        }
+
         // ======================================== END OF HEATMAPPING STUFF HERE ======================================== //
 
         //attempts to load a beatmap from a file path.
