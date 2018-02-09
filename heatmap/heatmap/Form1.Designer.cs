@@ -276,16 +276,15 @@
             // 
             // linkLabelRangeBegin
             // 
-            this.linkLabelRangeBegin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.linkLabelRangeBegin.AutoSize = true;
             this.linkLabelRangeBegin.LinkArea = new System.Windows.Forms.LinkArea(7, 9);
             this.linkLabelRangeBegin.Location = new System.Drawing.Point(795, 522);
-            this.linkLabelRangeBegin.MaximumSize = new System.Drawing.Size(213, 0);
             this.linkLabelRangeBegin.Name = "linkLabelRangeBegin";
             this.linkLabelRangeBegin.Size = new System.Drawing.Size(90, 17);
             this.linkLabelRangeBegin.TabIndex = 15;
             this.linkLabelRangeBegin.TabStop = true;
             this.linkLabelRangeBegin.Text = "Begin: 00:00:000";
+            this.linkLabelRangeBegin.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.linkLabelRangeBegin.UseCompatibleTextRendering = true;
             this.linkLabelRangeBegin.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelRangeBegin_LinkClicked);
             // 
@@ -295,12 +294,12 @@
             this.linkLabelRangeEnd.AutoSize = true;
             this.linkLabelRangeEnd.LinkArea = new System.Windows.Forms.LinkArea(5, 9);
             this.linkLabelRangeEnd.Location = new System.Drawing.Point(804, 545);
-            this.linkLabelRangeEnd.MaximumSize = new System.Drawing.Size(213, 0);
             this.linkLabelRangeEnd.Name = "linkLabelRangeEnd";
             this.linkLabelRangeEnd.Size = new System.Drawing.Size(81, 17);
             this.linkLabelRangeEnd.TabIndex = 16;
             this.linkLabelRangeEnd.TabStop = true;
             this.linkLabelRangeEnd.Text = "End: 00:00:000";
+            this.linkLabelRangeEnd.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.linkLabelRangeEnd.UseCompatibleTextRendering = true;
             this.linkLabelRangeEnd.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelRangeEnd_LinkClicked);
             // 

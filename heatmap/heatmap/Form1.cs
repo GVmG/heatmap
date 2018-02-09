@@ -117,9 +117,9 @@ namespace heatmap
             labelBeatmapSetID.LinkArea = new LinkArea(11, setid.Length);
 
             ReloadBeatmapTimeRange();
-            linkLabelRangeBegin.Text = $"Begin: {starttime}";
+            linkLabelRangeBegin.Text = $"Begin: {starttime} ";
             linkLabelRangeBegin.LinkArea = new LinkArea(7, starttime.Length);
-            linkLabelRangeEnd.Text = $"End: {endtime}";
+            linkLabelRangeEnd.Text = $"End: {endtime} ";
             linkLabelRangeEnd.LinkArea = new LinkArea(5, endtime.Length);
         }
 
@@ -531,10 +531,11 @@ namespace heatmap
         private void rangeBar1_RangeChanged(object sender, EventArgs e)
         {
             ReloadBeatmapTimeRange();
-            linkLabelRangeBegin.Text = $"Begin: {starttime}";
+            linkLabelRangeBegin.Text = $"Begin: {starttime} ";
             linkLabelRangeBegin.LinkArea = new LinkArea(7, starttime.Length);
-            linkLabelRangeEnd.Text = $"End: {endtime}";
+            linkLabelRangeEnd.Text = $"End: {endtime} ";
             linkLabelRangeEnd.LinkArea = new LinkArea(5, endtime.Length);
+            Console.WriteLine(starttime + " " + endtime);
         }
     }
 }
