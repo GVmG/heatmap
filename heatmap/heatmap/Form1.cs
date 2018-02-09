@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ namespace heatmap
     {
         private Dictionary<string, string> beatmapinfo = new Dictionary<string, string>();
         private List<HitObject> beatmap = new List<HitObject>();
+
         public Form1()
         {
             InitializeComponent();
@@ -108,6 +110,178 @@ namespace heatmap
 
         //updates the map info with a new dictionary
         private void UpdateMapInfo(Dictionary<string, string> data) { beatmapinfo = data; }
+
+        private void UpdateHeatMap()
+        {
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+
+            //GetIntensityMask(); //or whatever we'll need to do to render.
+            Bitmap bmap = new Bitmap(640, 480);
+            pictureBox1.Image = GetIntensityMask(bmap);
+
+            watch.Stop();
+
+            MessageBox.Show($"Completed heatmap in {watch.ElapsedMilliseconds}ms.", "Heatmap stored!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private List<HitObject> GetHitObjFromType(List<HitObject> list, int type)
+        {
+            List<HitObject> newlist = new List<HitObject>();
+
+            foreach (HitObject obj in list) { if (obj.type == type) { newlist.Add(obj); } }
+            return newlist;
+        }
+
+        // ===================================== BEGINNING OF HEATMAPPING STUFF HERE ===================================== //
+        // ==================================== BEWARE OF THE AWFUL APPROACH AND CODE ==================================== //
+
+        private Bitmap GetIntensityMask(Bitmap surface)
+        {
+            Graphics g = Graphics.FromImage(surface);
+            int offx = 64, offy = 48;
+            List<Pen> penlist=new List<Pen>(); //for later memory cleaning.
+
+            g.Clear(Color.Black);
+
+            int cs = (int)OsuUtils.CStoOsuPixels(float.Parse(beatmapinfo["cs"], CultureInfo.InvariantCulture));
+
+            bool rendersliderbodies = checkBoxSliderbodies.Checked, rendersliders = checkBoxShowSliders.Checked,
+                rendercircles = checkBoxShowCircles.Checked, renderspinners = checkBoxShowSpinners.Checked;
+            //render type - 0:points, 1:circles, 2:soft.
+            int rendertype = comboBoxRenderType.Text == "Points" ? 0 : (comboBoxRenderType.Text == "Circles" ? 1 : 2);
+            float mapintensity = 1f / (float)Math.Sqrt(beatmap.Count);
+
+            Pen playfieldpen = new Pen(Color.Gray);
+            penlist.Add(playfieldpen);
+
+            g.DrawRectangle(playfieldpen, offx, offy, 512, 384);
+            g.DrawLine(playfieldpen, 320, offy, 320, 480 - offy);
+            g.DrawLine(playfieldpen, offx, 240, 640 - offx, 240);
+
+            if (rendercircles)
+            {
+                List<HitObject> circlemap = GetHitObjFromType(beatmap, 0);
+                
+                if (rendertype == 0) //point rendering
+                {
+                    Pen pen = new Pen(Color.White);
+                    penlist.Add(pen);
+                    foreach (HitObject point in circlemap)
+                    {
+                        g.DrawEllipse(pen, point.position[0].X + offx, point.position[0].Y + offy, 1, 1);
+                    }
+                }
+                else if (rendertype == 1) //circle rendering
+                {
+                    Pen pen = new Pen(Color.FromArgb((int)(mapintensity * 255), Color.White));
+                    penlist.Add(pen);
+                    foreach (HitObject point in circlemap)
+                    {
+                        g.FillEllipse(pen.Brush, point.position[0].X + offx - (int)(cs * 0.5), point.position[0].Y + offy - (int)(cs * 0.5), cs, cs);
+                    }
+                }
+                else if (rendertype==2) //soft rendering
+                {
+                    foreach (HitObject point in circlemap)
+                    {
+                        point.RenderSoft(g, offx, offy, cs, mapintensity);
+                    }
+                }
+            }
+
+            if (rendersliders)
+            {
+                List<HitObject> slidermap = GetHitObjFromType(beatmap, 1);
+
+                if (rendertype == 0) //point rendering
+                {
+                    Pen pen = new Pen(Color.White);
+                    penlist.Add(pen);
+                    if (rendersliderbodies)
+                    {
+                        Pen pen2 = new Pen(Color.FromArgb(96, Color.White));
+                        penlist.Add(pen2);
+                        foreach (HitObject point in slidermap)
+                        {
+                            int count = 0;
+                            foreach(Point pos in point.position)
+                            {
+                                g.DrawEllipse(pen, pos.X + offx - 1, pos.Y + offy - 1, 3, 3);
+                                if (count > 0)
+                                {
+                                    Point pos1 = new Point(pos.X + offx, pos.Y + offy),
+                                        pos2 = new Point(point.position[count - 1].X + offx, point.position[count - 1].Y + offy);
+                                    g.DrawLine(pen2, pos1, pos2);
+                                }
+                                count++;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (HitObject point in slidermap)
+                        {
+                            g.DrawEllipse(pen, point.position[0].X + offx - 1, point.position[0].Y + offy - 1, 3, 3);
+                        }
+                    }
+                }
+                else if (rendertype==1) // circle rendering
+                {
+                    Pen pen = new Pen(Color.FromArgb((int)(mapintensity * 255), Color.White));
+                    penlist.Add(pen);
+                    if (rendersliderbodies)
+                    {
+                        foreach (HitObject slider in slidermap)
+                        {
+                            string slidertype = slider.slidertype;
+
+                            //will redo sliderbody rendering in this case (circle rendering)
+                            //because it needs to render the path and the circle without mxiing their alphas.
+                            foreach (Point pos in slider.position)
+                            {
+                                g.FillEllipse(pen.Brush, pos.X + offx - (int)(cs * 0.5), pos.Y + offy - (int)(cs * 0.5), cs, cs);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (HitObject point in slidermap)
+                        {
+                            g.FillEllipse(pen.Brush, point.position[0].X + offx - (int)(cs * 0.5), point.position[0].Y + offy - (int)(cs * 0.5), cs, cs);
+                        }
+                    }
+                }
+            }
+
+            if (renderspinners)
+            {
+                int spinnercount = GetHitObjFromType(beatmap, 2).Count; //just get the count cause spinners always appear in the center
+
+                Pen pen = new Pen(Color.White);
+                penlist.Add(pen);
+
+                if (rendertype == 0) //point rendering
+                {
+                    for (int i = spinnercount; i > 0; i++) //reverse for loop cause SPEEEEEEEED
+                    {
+                        g.DrawEllipse(pen, 320 + offx, 240 + offy, 1, 1);
+                    }
+                }
+                else // if rendering by soft *or* hard circle, always render spinners as a circumference (not a filled circle) of half the cs
+                {
+                    for (int i = spinnercount; i > 0; i++) 
+                    {
+                        g.DrawEllipse(pen, 320 + offx - (int)(cs * 0.25), 240 + offy - (int)(cs * 0.25), (int)(cs * 0.5), (int)(cs * 0.5));
+                    }
+                }
+            }
+
+            foreach (Pen pen in penlist) { pen.Dispose(); } //clean dat memory boiiii (this actually doesn't clean much but it's better to have it)
+            
+            return surface;
+        }
+        
+        // ======================================== END OF HEATMAPPING STUFF HERE ======================================== //
 
         //attempts to load a beatmap from a file path.
         //returns whether it succeeded or not - while this is not used yet, it can be useful so I'm doing it before I forget.
@@ -210,6 +384,7 @@ namespace heatmap
             UpdateMapInfo(newinfo);
             beatmap = newmap;
             UpdateMapData(beatmapinfo, counts);
+            UpdateHeatMap();
 
             return true;
         }

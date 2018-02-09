@@ -217,7 +217,7 @@
             this.labelBeatmapInfo.AutoSize = true;
             this.labelBeatmapInfo.LinkArea = new System.Windows.Forms.LinkArea(0, 14);
             this.labelBeatmapInfo.Location = new System.Drawing.Point(6, 16);
-            this.labelBeatmapInfo.MaximumSize = new System.Drawing.Size(213, 0);
+            this.labelBeatmapInfo.MaximumSize = new System.Drawing.Size(213, 220);
             this.labelBeatmapInfo.Name = "labelBeatmapInfo";
             this.labelBeatmapInfo.Size = new System.Drawing.Size(74, 13);
             this.labelBeatmapInfo.TabIndex = 14;
@@ -260,7 +260,6 @@
             this.rangeBar1.Name = "rangeBar1";
             this.rangeBar1.Size = new System.Drawing.Size(640, 40);
             this.rangeBar1.TabIndex = 13;
-            this.rangeBar1.RangeChanged+=this.rangeBar1_RangeChanged;
             // 
             // labelTimeline
             // 

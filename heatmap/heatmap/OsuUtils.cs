@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace heatmap
 {
@@ -36,6 +37,12 @@ namespace heatmap
         public static int Clamp(int value, int min, int max)
         {
             return (value < min ? min : (value > max ? max : value));
+        }
+
+        // returns a color based on the input, for the colored heatmap rendering (range 0-1)
+        public static Color HeatMap(float value)
+        {
+            return Color.FromArgb(255, (int)(255 * value), (int)(255 * (1 - value)));
         }
     }
 }

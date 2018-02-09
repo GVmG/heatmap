@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace heatmap
 {
@@ -52,6 +53,20 @@ namespace heatmap
                 }
             }
             else { throw new Exception($"Couldn't create HitObject from string [{hitobj}]."); }
+        }
+
+        public void RenderSoft(Graphics g, int xoff, int yoff, int cs, float strength)
+        {
+            GraphicsPath path = new GraphicsPath();
+            path.AddEllipse(position[0].X + xoff - (int)(cs * 0.5), position[0].Y + yoff - (int)(cs * 0.5), cs, cs);
+            PathGradientBrush brush = new PathGradientBrush(path)
+            {
+                CenterColor = Color.FromArgb((int)(strength * 255), Color.White), //gonna have to rework the strength
+                SurroundColors = new Color[] { Color.FromArgb(0, Color.White) }
+            };
+            g.FillEllipse(brush, position[0].X + xoff - (int)(cs * 0.5), position[0].Y + yoff - (int)(cs * 0.5), cs, cs);
+            brush.Dispose();
+            path.Dispose();
         }
 
         //set the sliderpoints - returns false if this isn't a slider, true otherwise.
