@@ -41,6 +41,7 @@
             this.checkBoxShowSpinners = new System.Windows.Forms.CheckBox();
             this.checkBoxSliderbodies = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.checkBoxRenderColoured = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxRenderType = new System.Windows.Forms.ComboBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -50,8 +51,8 @@
             this.button2 = new System.Windows.Forms.Button();
             this.toolTipInfo = new System.Windows.Forms.ToolTip(this.components);
             this.rangeBar1 = new heatmap.RangeBar();
-            this.labelTimeline = new System.Windows.Forms.Label();
-            this.checkBoxRenderColoured = new System.Windows.Forms.CheckBox();
+            this.linkLabelRangeBegin = new System.Windows.Forms.LinkLabel();
+            this.linkLabelRangeEnd = new System.Windows.Forms.LinkLabel();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -180,6 +181,16 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Settings";
             // 
+            // checkBoxRenderColoured
+            // 
+            this.checkBoxRenderColoured.AutoSize = true;
+            this.checkBoxRenderColoured.Location = new System.Drawing.Point(6, 89);
+            this.checkBoxRenderColoured.Name = "checkBoxRenderColoured";
+            this.checkBoxRenderColoured.Size = new System.Drawing.Size(120, 17);
+            this.checkBoxRenderColoured.TabIndex = 13;
+            this.checkBoxRenderColoured.Text = "Coloured Rendering";
+            this.checkBoxRenderColoured.UseVisualStyleBackColor = true;
+            // 
             // label2
             // 
             this.label2.AutoSize = true;
@@ -260,34 +271,46 @@
             // 
             this.rangeBar1.Location = new System.Drawing.Point(12, 522);
             this.rangeBar1.Name = "rangeBar1";
-            this.rangeBar1.Size = new System.Drawing.Size(640, 40);
+            this.rangeBar1.Size = new System.Drawing.Size(772, 40);
             this.rangeBar1.TabIndex = 13;
             // 
-            // labelTimeline
+            // linkLabelRangeBegin
             // 
-            this.labelTimeline.AutoSize = true;
-            this.labelTimeline.Location = new System.Drawing.Point(661, 536);
-            this.labelTimeline.Name = "labelTimeline";
-            this.labelTimeline.Size = new System.Drawing.Size(114, 13);
-            this.labelTimeline.TabIndex = 14;
-            this.labelTimeline.Text = "Range: 00:00 -> 03:32";
+            this.linkLabelRangeBegin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.linkLabelRangeBegin.AutoSize = true;
+            this.linkLabelRangeBegin.LinkArea = new System.Windows.Forms.LinkArea(7, 9);
+            this.linkLabelRangeBegin.Location = new System.Drawing.Point(795, 522);
+            this.linkLabelRangeBegin.MaximumSize = new System.Drawing.Size(213, 0);
+            this.linkLabelRangeBegin.Name = "linkLabelRangeBegin";
+            this.linkLabelRangeBegin.Size = new System.Drawing.Size(90, 17);
+            this.linkLabelRangeBegin.TabIndex = 15;
+            this.linkLabelRangeBegin.TabStop = true;
+            this.linkLabelRangeBegin.Text = "Begin: 00:00:000";
+            this.linkLabelRangeBegin.UseCompatibleTextRendering = true;
+            this.linkLabelRangeBegin.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelRangeBegin_LinkClicked);
             // 
-            // checkBoxRenderColoured
+            // linkLabelRangeEnd
             // 
-            this.checkBoxRenderColoured.AutoSize = true;
-            this.checkBoxRenderColoured.Location = new System.Drawing.Point(6, 89);
-            this.checkBoxRenderColoured.Name = "checkBoxRenderColoured";
-            this.checkBoxRenderColoured.Size = new System.Drawing.Size(120, 17);
-            this.checkBoxRenderColoured.TabIndex = 13;
-            this.checkBoxRenderColoured.Text = "Coloured Rendering";
-            this.checkBoxRenderColoured.UseVisualStyleBackColor = true;
+            this.linkLabelRangeEnd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.linkLabelRangeEnd.AutoSize = true;
+            this.linkLabelRangeEnd.LinkArea = new System.Windows.Forms.LinkArea(5, 9);
+            this.linkLabelRangeEnd.Location = new System.Drawing.Point(804, 545);
+            this.linkLabelRangeEnd.MaximumSize = new System.Drawing.Size(213, 0);
+            this.linkLabelRangeEnd.Name = "linkLabelRangeEnd";
+            this.linkLabelRangeEnd.Size = new System.Drawing.Size(81, 17);
+            this.linkLabelRangeEnd.TabIndex = 16;
+            this.linkLabelRangeEnd.TabStop = true;
+            this.linkLabelRangeEnd.Text = "End: 00:00:000";
+            this.linkLabelRangeEnd.UseCompatibleTextRendering = true;
+            this.linkLabelRangeEnd.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelRangeEnd_LinkClicked);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(897, 567);
-            this.Controls.Add(this.labelTimeline);
+            this.Controls.Add(this.linkLabelRangeEnd);
+            this.Controls.Add(this.linkLabelRangeBegin);
             this.Controls.Add(this.rangeBar1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.groupBox2);
@@ -337,8 +360,9 @@
         private System.Windows.Forms.LinkLabel labelBeatmapSetID;
         private System.Windows.Forms.ToolTip toolTipInfo;
         private RangeBar rangeBar1;
-        private System.Windows.Forms.Label labelTimeline;
         private System.Windows.Forms.CheckBox checkBoxRenderColoured;
+        private System.Windows.Forms.LinkLabel linkLabelRangeBegin;
+        private System.Windows.Forms.LinkLabel linkLabelRangeEnd;
     }
 }
 

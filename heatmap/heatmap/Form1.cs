@@ -16,6 +16,7 @@ namespace heatmap
     public partial class Form1 : Form
     {
         private Dictionary<string, string> beatmapinfo = new Dictionary<string, string>();
+        string starttime = "00:00:000", endtime = "00:00:000";
         private List<HitObject> beatmap = new List<HitObject>();
         private static Color[] colorarray = new Color[] { Color.Black, Color.Blue, Color.Green, Color.Yellow, Color.Red}; //used in color function for heatmap.
 
@@ -50,6 +51,7 @@ namespace heatmap
         private void Form1_Load(object sender, EventArgs e)
         {
             SetDefaultMapInfo(beatmapinfo);
+            this.rangeBar1.RangeChanged += rangeBar1_RangeChanged;
 
             UpdateMapData(beatmapinfo, new int[] { 0, 0, 0 });
         }
@@ -68,6 +70,12 @@ namespace heatmap
             infodic["id"] = "(unknown)";
             infodic["setid"] = "(unknown)";
             infodic["version"] = "(unknown)";
+        }
+
+        //reorders the beatmap hitobjects so that they are in the correct time.
+        private void ReOrderBeatmap (List<HitObject> map)
+        {
+            map.Sort(delegate (HitObject obj1, HitObject obj2) { return obj1.time.CompareTo(obj2.time); });
         }
 
         //updates the data shown in the form
@@ -107,22 +115,54 @@ namespace heatmap
 
             labelBeatmapSetID.Text = "Mapset ID: " + setid;
             labelBeatmapSetID.LinkArea = new LinkArea(11, setid.Length);
+
+            ReloadBeatmapTimeRange();
+            linkLabelRangeBegin.Text = $"Begin: {starttime}";
+            linkLabelRangeBegin.LinkArea = new LinkArea(7, starttime.Length);
+            linkLabelRangeEnd.Text = $"End: {endtime}";
+            linkLabelRangeEnd.LinkArea = new LinkArea(5, endtime.Length);
         }
 
         //updates the map info with a new dictionary
         private void UpdateMapInfo(Dictionary<string, string> data) { beatmapinfo = data; }
 
+        private void ReloadBeatmapTimeRange()
+        {
+            if (beatmap.Count <= 0)
+            {
+                starttime = "00:00:000";
+                endtime = "00:00:000";
+                return;
+            }
+            int timemin = beatmap[0].time; //these suppose that the list has been ordered already
+            int timemax = beatmap[beatmap.Count - 1].time;
+            int timediff = (timemax - timemin);
+            TimeSpan spanmin = TimeSpan.FromMilliseconds(timemin + (int)(rangeBar1.GetMin() * timediff));
+            TimeSpan spanmax = TimeSpan.FromMilliseconds(timemin + (int)(rangeBar1.GetMax() * timediff));
+            starttime = spanmin.ToString(@"mm\:ss\:fff");
+            endtime = spanmax.ToString(@"mm\:ss\:fff");
+        }
+
         private void UpdateHeatMap()
         {
             var watch = System.Diagnostics.Stopwatch.StartNew();
-
-            //GetIntensityMask(); //or whatever we'll need to do to render.
+            
             Bitmap bmap = new Bitmap(640, 480);
-            pictureBox1.Image = GetIntensityMask(bmap);
+            pictureBox1.Image = GetHeatmapBitmap(bmap);
 
             watch.Stop();
 
             MessageBox.Show($"Completed heatmap in {watch.ElapsedMilliseconds}ms.", "Heatmap stored!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private List<HitObject> GetHitObjFromTime(List<HitObject> map, int timemin, int timemax)
+        {
+            List<HitObject> newlist = new List<HitObject>();
+            foreach (HitObject obj in map)
+            {
+                if (obj.time >= timemin && obj.time <= timemax) { newlist.Add(obj); }
+            }
+            return newlist;
         }
 
         private List<HitObject> GetHitObjFromType(List<HitObject> list, int type)
@@ -136,7 +176,7 @@ namespace heatmap
         // ===================================== BEGINNING OF HEATMAPPING STUFF HERE ===================================== //
         // ==================================== BEWARE OF THE AWFUL APPROACH AND CODE ==================================== //
 
-        private Bitmap GetIntensityMask(Bitmap surface)
+        private Bitmap GetHeatmapBitmap(Bitmap surface)
         {
             Graphics g = Graphics.FromImage(surface);
             int offx = 64, offy = 48;
@@ -145,13 +185,18 @@ namespace heatmap
             g.Clear(Color.Black);
             g.CompositingMode = CompositingMode.SourceOver;
 
+            int timemin = beatmap[0].time; //these suppose that the list has been ordered already
+            int timemax = beatmap[beatmap.Count - 1].time;
+            int timediff = (timemax - timemin);
+
             int cs = (int)OsuUtils.CStoOsuPixels(float.Parse(beatmapinfo["cs"], CultureInfo.InvariantCulture));
 
             bool rendersliderbodies = checkBoxSliderbodies.Checked, rendersliders = checkBoxShowSliders.Checked,
                 rendercircles = checkBoxShowCircles.Checked, renderspinners = checkBoxShowSpinners.Checked;
             //render type - 0:points, 1:circles, 2:soft.
             int rendertype = comboBoxRenderType.Text == "Points" ? 0 : (comboBoxRenderType.Text == "Circles" ? 1 : 2);
-            float mapintensity = 1f / (float)Math.Sqrt(beatmap.Count);
+            List<HitObject> rangeofobjects = GetHitObjFromTime(beatmap, timemin + (int)(timediff * rangeBar1.GetMin()), timemin + (int)(timediff * rangeBar1.GetMax()));
+            float mapintensity = 1f / (float)Math.Sqrt(rangeofobjects.Count);
 
             Pen playfieldpen = new Pen(Color.Gray);
             penlist.Add(playfieldpen);
@@ -162,7 +207,7 @@ namespace heatmap
 
             if (rendercircles)
             {
-                List<HitObject> circlemap = GetHitObjFromType(beatmap, 0);
+                List<HitObject> circlemap = GetHitObjFromType(rangeofobjects, 0);
                 
                 if (rendertype == 0) //point rendering
                 {
@@ -193,7 +238,7 @@ namespace heatmap
 
             if (rendersliders)
             {
-                List<HitObject> slidermap = GetHitObjFromType(beatmap, 1);
+                List<HitObject> slidermap = GetHitObjFromType(rangeofobjects, 1);
 
                 if (rendertype == 0) //point rendering
                 {
@@ -257,7 +302,7 @@ namespace heatmap
 
             if (renderspinners)
             {
-                int spinnercount = GetHitObjFromType(beatmap, 2).Count; //just get the count cause spinners always appear in the center
+                int spinnercount = GetHitObjFromType(rangeofobjects, 2).Count; //just get the count cause spinners always appear in the center
 
                 Pen pen = new Pen(Color.White);
                 penlist.Add(pen);
@@ -410,6 +455,7 @@ namespace heatmap
             }
 
             UpdateMapInfo(newinfo);
+            ReOrderBeatmap(newmap);
             beatmap = newmap;
             UpdateMapData(beatmapinfo, counts);
             UpdateHeatMap();
@@ -458,9 +504,37 @@ namespace heatmap
             }
         }
 
+        private void linkLabelRangeBegin_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (beatmap.Count <= 0)
+            {
+                MessageBox.Show("Cannot open the editor (beatmap seems to be empty).", "Couldn't open editor!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else
+            {
+                System.Diagnostics.Process.Start("osu://edit/"+starttime);
+            }
+        }
+
+        private void linkLabelRangeEnd_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (beatmap.Count <= 0)
+            {
+                MessageBox.Show("Cannot open the editor (beatmap seems to be empty).", "Couldn't open editor!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else
+            {
+                System.Diagnostics.Process.Start("osu://edit/" + endtime);
+            }
+        }
+
         private void rangeBar1_RangeChanged(object sender, EventArgs e)
         {
-            labelTimeline.Text = $"Range: {(int)(rangeBar1.GetMin() * 100)} / {(int)(rangeBar1.GetMax() * 100)}";
+            ReloadBeatmapTimeRange();
+            linkLabelRangeBegin.Text = $"Begin: {starttime}";
+            linkLabelRangeBegin.LinkArea = new LinkArea(7, starttime.Length);
+            linkLabelRangeEnd.Text = $"End: {endtime}";
+            linkLabelRangeEnd.LinkArea = new LinkArea(5, endtime.Length);
         }
     }
 }
