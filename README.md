@@ -10,13 +10,13 @@ You can pick from different settings on the right, like how the program will ren
 # Features
 - HEATMAP! It's the whole point of the program! You can pick between a greyscale "heightmap" and a coloured "heatmap".
 - Show map info in the bottom right (hover for more details such as AR in milliseconds, OD hit windows etc.)
-- HitObject filtering (so you could, for example, look at the distribution of circles only, or sliders only)
+- HitObject filtering (so you can, for example, look at the distribution of circles only, or sliders only)
 - Open beatmap page (mapset, difficulty or even the mapper's userpage) from the program itself
+- Only render the heatmap of a certain part of the map (and you can click the time to open the map in the editor)
 
 Upcoming Features:
 - scale heatmap values better than a generic 1/sqrt(object_count)
 - account for sliderbodies in soft and circle rendering (not just the sliderpoints, like it's doing right now)
-- ability to only look at the heatmap in a part of the map (as opposed to just the whole map)
 - redraw the heatmap when you change properties (instead of when you click the Load The Map! button)
 
 # Planned Features
