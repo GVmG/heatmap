@@ -18,6 +18,7 @@ namespace heatmap
         private Dictionary<string, string> beatmapinfo = new Dictionary<string, string>();
         string starttime = "00:00:000", endtime = "00:00:000";
         private List<HitObject> beatmap = new List<HitObject>();
+        private DirectBitmap surface;
         private static Color[] colorarray = new Color[] { Color.Black, Color.Blue, Color.Green, Color.Yellow, Color.Red}; //used in color function for heatmap.
 
         public Form1()
@@ -51,7 +52,8 @@ namespace heatmap
         private void Form1_Load(object sender, EventArgs e)
         {
             SetDefaultMapInfo(beatmapinfo);
-            this.rangeBar1.RangeChanged += rangeBar1_RangeChanged;
+            surface = new DirectBitmap(640, 480);
+            rangeBar1.RangeChanged += rangeBar1_RangeChanged;
 
             UpdateMapData(beatmapinfo, new int[] { 0, 0, 0 });
         }
@@ -147,8 +149,9 @@ namespace heatmap
         {
             var watch = System.Diagnostics.Stopwatch.StartNew();
             
-            Bitmap bmap = new Bitmap(640, 480);
-            pictureBox1.Image = GetHeatmapBitmap(bmap);
+            if (surface != null) { surface.Dispose(); Console.WriteLine("Cleared surface from memory"); }
+            surface = new DirectBitmap(640, 480);
+            pictureBox1.Image = GetHeatmapBitmap(surface);
 
             watch.Stop();
 
@@ -176,9 +179,9 @@ namespace heatmap
         // ===================================== BEGINNING OF HEATMAPPING STUFF HERE ===================================== //
         // ==================================== BEWARE OF THE AWFUL APPROACH AND CODE ==================================== //
 
-        private Bitmap GetHeatmapBitmap(Bitmap surface)
+        private Bitmap GetHeatmapBitmap(DirectBitmap isurf)
         {
-            Graphics g = Graphics.FromImage(surface);
+            Graphics g = Graphics.FromImage(isurf.Bitmap);
             int offx = 64, offy = 48;
             List<Pen> penlist=new List<Pen>(); //for later memory cleaning.
 
@@ -328,17 +331,17 @@ namespace heatmap
             //Console.WriteLine(surface.GetPixel(0, 0));
             if (checkBoxRenderColoured.Checked)
             {
-                for (int ix = surface.Width - 1; ix>=0 ; ix--)
+                for (int ix = isurf.Width - 1; ix>=0 ; ix--)
                 {
-                    for (int iy = surface.Height - 1; iy >= 0; iy--)
+                    for (int iy = isurf.Height - 1; iy >= 0; iy--)
                     {
-                        float curvalue = surface.GetPixel(ix, iy).R / 256f;
-                        surface.SetPixel(ix, iy, GetColorFromHMValue(curvalue));
+                        float curvalue = isurf.GetPixel(ix, iy).R / 256f;
+                        isurf.SetPixel(ix, iy, GetColorFromHMValue(curvalue));
                     }
                 }
             }
 
-            return surface;
+            return isurf.Bitmap;
         }
         
         // returns a color based on the input, for the colored heatmap rendering (range 0-1)
