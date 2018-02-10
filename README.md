@@ -28,7 +28,8 @@ This program is developed by [Rainfall](https://osu.ppy.sh/u/6995159) (aka GV).
 **Special Thanks:**
 - the Mapping Mentorship people for the idea, and for some feature requests. Also for being the great people they are.
 - peppy for making such a great game.
-- 50 different people from StackOverflow and all of their PathGradientBrush tutorials and code (which I didn't use because my stuff is a bit more specific)
+- SaxxonPike from StackOverflow for [the DirectBitmap class](https://stackoverflow.com/questions/24701703/c-sharp-faster-alternatives-to-setpixel-and-getpixel-for-bitmaps-for-windows-f) (nearly 3x faster than a normal Bitmap, with GetPixel()/SetPixel()).
+- 50 other different people from StackOverflow and all of their PathGradientBrush tutorials and code (which I didn't use because my stuff is a bit more specific)
 - Cl8n for [the CS-to-osu!pixels formula](https://osu.ppy.sh/forum/p/4282387) and /u/Fukiyel for [the OD-to-Milliseconds formula](https://www.reddit.com/r/osugame/comments/781ot4/od_in_milliseconds/doqngos)
 - Borengar for constanty using JavaScript so that my poorly performing code has something to be faster than.
 - thank mr monstrata 4 da pp
